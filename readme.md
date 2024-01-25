@@ -1,7 +1,7 @@
 # Chicken Coop
 
 * [Full paper](https://r.rachum.com/dh-paper)
-* Coming soon: Extended abstract
+* [Extended abstract](https://r.rachum.com/dh-ea-paper)
 * Coming soon: Poster
 * Coming soon: Deck
 * Coming soon: Talk video
