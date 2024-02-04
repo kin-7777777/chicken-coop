@@ -359,7 +359,8 @@ def transplant(*, moniker: Optional[str], visitor_trek_path_string: str,
                 assert len(visitor_mini_trek.policy_path_by_name) == n_agents
                 fluff.extend(
                     misc.get_wacky_choices(visitor_mini_trek.policy_path_by_name.items(),
-                                           n=n_visitor_agents, k=n_transplants_per_visitor_population)
+                                           n=n_visitor_agents,
+                                           k=n_transplants_per_visitor_population)
                 )
 
 
