@@ -330,7 +330,7 @@ def transplant(*, moniker: Optional[str], visitor_trek_path_string: str,
     with trekking.Trek.create(extra_meta={'command': 'transplant', 'moniker': moniker}) as trek:
         county.init_ray()
 
-        visitor_trek = trekking.Trek.get(visitor_trek_path_string, allow_single_trek=False)
+        visitor_trek = trekking.Trek.get(visitor_trek_path_string)
 
         coop_config_kwargs = {}
         for key, values in raw_coop_config_kwargs.items():
