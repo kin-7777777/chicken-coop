@@ -314,6 +314,12 @@ def run(*, moniker: Optional[str], use_tune: bool, n_tune_samples: int,
               type=click.Path(exists=True, dir_okay=True, file_okay=False, resolve_path=True,
                               path_type=pathlib.Path),
               show_default=True)
+@click.option('--min-n-visitor-agents', type=int,
+              default=defaults.DEFAULT_MIN_N_VISITOR_AGENTS,
+              show_default=True)
+@click.option('--max-n-visitor-agents', type=int,
+              default=defaults.DEFAULT_MAX_N_VISITOR_AGENTS,
+              show_default=True)
 @click.option('--n-visitor-populations-per-n-visitor-agents', type=int,
               default=defaults.DEFAULT_N_VISITOR_POPULATIONS_PER_N_VISITOR_AGENTS,
               show_default=True)
@@ -324,6 +330,8 @@ def run(*, moniker: Optional[str], use_tune: bool, n_tune_samples: int,
                                                    'n_generations': (35,),
                                                    'train_batch_size': (256,),})
 def transplant(*, moniker: Optional[str], visitor_trek_path_string: str,
+               min_n_visitor_agents: int,
+               max_n_visitor_agents: Optional[int],
                n_visitor_populations_per_n_visitor_agents: int,
                n_transplants_per_visitor_population: int, **raw_coop_config_kwargs) -> None:
     '''Transplant experienced agents into naive populations.'''
@@ -353,7 +361,10 @@ def transplant(*, moniker: Optional[str], visitor_trek_path_string: str,
         assert len(visitor_mini_treks) == n_visitor_populations_per_n_visitor_agents
         fluff = []
         n_agents = CoopConfig(**coop_config_kwargs).n_agents
-        for n_visitor_agents in range(n_agents - 1):
+        n_visitor_agents_range = range(min_n_visitor_agents,
+                                       (n_agents - 1) if max_n_visitor_agents is None else
+                                       min((n_agents - 1), max_n_visitor_agents + 1))
+        for n_visitor_agents in n_visitor_agents_range:
             for visitor_mini_trek in visitor_mini_treks:
                 visitor_mini_trek: trekking.MiniTrek
                 assert len(visitor_mini_trek.policy_path_by_name) == n_agents
@@ -364,11 +375,11 @@ def transplant(*, moniker: Optional[str], visitor_trek_path_string: str,
                 )
 
 
-        assert len(fluff) == ((n_agents - 1) * n_transplants_per_visitor_population *
+        assert len(fluff) == ((n_visitor_agents_range.stop - n_visitor_agents_range.start) *
+                              n_transplants_per_visitor_population *
                               n_visitor_populations_per_n_visitor_agents)
         assert set(collections.Counter(map(len, fluff)).values()) == \
                  {n_visitor_populations_per_n_visitor_agents * n_transplants_per_visitor_population}
-        assert len(fluff[0]) == 0
         # Easing troubleshooting by making the first runs not be degenerate cases:
         for _ in range(100):
             if set(map(len, fluff[:4])) & {0, n_agents}:
