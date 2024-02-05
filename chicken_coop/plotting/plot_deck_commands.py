@@ -163,7 +163,7 @@ def two_aggressiveness(context: click.Context) -> None:
 @click.pass_context
 def six_aggressiveness(context: click.Context) -> None:
     trek = trekking.Trek.get(context.obj['trek_path_expression'], moniker='deck-six',
-                             allow_single_trek=False)
+                             allow_single_trek=False, force_moniker=False)
 
     print(f'Making `six-aggressiveness` plots for {trek} ...', file=sys.stderr)
 

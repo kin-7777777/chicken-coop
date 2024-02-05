@@ -148,7 +148,8 @@ class Trek(BaseTrek):
     @staticmethod
     def get(trek_path_expression: str | pathlib.Path | None,
             *, allow_multi_trek: bool = True, allow_single_trek: bool = True,
-            allow_empty_trek: bool = False, moniker: Optional[str] = None) -> Trek:
+            allow_empty_trek: bool = False, moniker: Optional[str] = None,
+            force_moniker: bool = True) -> Trek:
         '''
         Get a trek, usually for running analysis or producing plots.
 
@@ -163,7 +164,7 @@ class Trek(BaseTrek):
             ((allow_multi_trek and trek.is_multi_trek) or
              (allow_single_trek and trek.is_single_trek) or
              (allow_empty_trek and trek.is_empty_trek)) and
-            (moniker is None or trek.moniker == moniker)
+            (moniker is None or not force_moniker or trek.moniker == moniker)
         )
 
         if trek_path_expression is None:
