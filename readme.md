@@ -2,7 +2,6 @@
 
 * [Full paper](https://r.rachum.com/dh-paper)
 * [Extended abstract](https://r.rachum.com/dh-ea-paper)
-* Coming soon: Poster
 * [Slide deck](https://r.rachum.com/dh-deck)
 * Coming soon: Talk video
 
