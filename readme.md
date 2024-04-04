@@ -3,7 +3,7 @@
 * [Full paper](https://r.rachum.com/dh-paper)
 * [Extended abstract](https://r.rachum.com/dh-ea-paper)
 * [Slide deck](https://r.rachum.com/dh-deck)
-* Coming soon: Talk video
+* [Talk video](https://r.rachum.com/dh-video)
 
 This is the accompanying code for our paper **Emergent Dominance Hierarchies in Reinforcement Learning Agents** to be presented at AAMAS 2024.
 
