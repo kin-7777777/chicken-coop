@@ -219,7 +219,9 @@ class DominanceHierarchy:
         counter = collections.Counter(linear_ranks)
         return tuple(counter[i] / len(dominance_hierarchies) for i in range(n_ranks))
 
-
+    @staticmethod
+    def make_random(n: int) -> DominanceHierarchy:
+        return DominanceHierarchy(map(county.misc.shuffled, itertools.combinations(range(n), 2)))
 
 
 

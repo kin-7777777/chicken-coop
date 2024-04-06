@@ -627,8 +627,9 @@ def transmit(context: click.Context) -> None:
 
 
 @plot_paper.command()
+@click.option('-b', '--baseline/--no-baseline', 'include_baseline', is_flag=True, default=False)
 @click.pass_context
-def non_linearity(context: click.Context) -> None:
+def non_linearity(context: click.Context, *, include_baseline: bool) -> None:
 
     trek = trekking.Trek.get(context.obj['trek_path_expression'], allow_single_trek=False,
                              moniker='paper-cycles')
@@ -674,17 +675,74 @@ def non_linearity(context: click.Context) -> None:
     csv_paths = tuple(williamson_folder.glob('*.csv'))
 
     mice_dominance_hierarchies = tuple(map(csv_path_to_dominance_hierarchy, csv_paths))
-    mice_mean_rank_legibilities = \
+    mice_mean_rank_linearities = \
                              DominanceHierarchy.get_mean_rank_linearity(mice_dominance_hierarchies)
+
 
 
     dominance_hierarchies = tuple(mini_trek.dominance_hierarchy for mini_trek in trek.mini_treks
                                   if mini_trek.dominance_hierarchy.is_complete)
 
-    mean_rank_legibilities = DominanceHierarchy.get_mean_rank_linearity(dominance_hierarchies)
+    mean_rank_linearities = DominanceHierarchy.get_mean_rank_linearity(dominance_hierarchies)
 
-    df = pd.DataFrame({'mice_rank_linearity': mice_mean_rank_legibilities,
-                       'chicken_coop_rank_linearity': mean_rank_legibilities})
+    dataframe_content = {'mice_rank_linearity': mice_mean_rank_linearities,
+                         'chicken_coop_rank_linearity': mean_rank_linearities,}
+
+    if include_baseline:
+        random_dominance_hierarchies = tuple(
+            DominanceHierarchy.make_random(mice_dominance_hierarchies[0].n_agents)
+            for _ in range(100)
+        )
+        dataframe_content['random_mean_rank_linearities'] = \
+                            DominanceHierarchy.get_mean_rank_linearity(random_dominance_hierarchies)
+
+    df = pd.DataFrame(dataframe_content)
+
+    scatters = [
+        go.Scatter(
+            x=df.index,
+            y=df['mice_rank_linearity'],
+            name='Male CD-1 mice',
+            mode='lines+markers',
+            line=dict(
+                color='orange',
+                width=6,
+            ),
+            marker=dict(
+                size=13,
+            )
+        ),
+        go.Scatter(
+            x=df.index,
+            y=df['chicken_coop_rank_linearity'],
+            name='Chicken Coop agents',
+            mode='lines+markers',
+            line=dict(
+                color='purple',
+                width=6,
+            ),
+            marker=dict(
+                size=13,
+            )
+        ),
+    ]
+
+    if include_baseline:
+        scatters.append(
+            go.Scatter(
+                x=df.index,
+                y=df['random_mean_rank_linearities'],
+                name='Baseline',
+                mode='lines+markers',
+                line=dict(
+                    color='#575',
+                    width=6,
+                ),
+                marker=dict(
+                    size=13,
+                )
+            )
+        )
 
     axis_template = global_axis_template | dict(
         title_font=dict(size=50),
@@ -695,35 +753,7 @@ def non_linearity(context: click.Context) -> None:
     )
 
     figure = go.Figure(
-        data=(
-            go.Scatter(
-                x=df.index,
-                y=df['mice_rank_linearity'],
-                name='Male CD-1 mice',
-                mode='lines+markers',
-                line=dict(
-                    color='orange',
-                    width=6,
-                ),
-                marker=dict(
-                    size=13,
-                )
-            ),
-            go.Scatter(
-                x=df.index,
-                y=df['chicken_coop_rank_linearity'],
-                name='Chicken Coop agents',
-                mode='lines+markers',
-                line=dict(
-                    color='purple',
-                    width=6,
-                ),
-                marker=dict(
-                    size=13,
-                )
-            ),
-        )
-        ,
+        data=scatters,
         layout=go.Layout(
             **global_layout_template,
             xaxis=dict(

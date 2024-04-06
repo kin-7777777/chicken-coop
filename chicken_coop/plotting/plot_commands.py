@@ -120,10 +120,10 @@ def dh(context, *, output: bool) -> None:
     # # 1.0,0.8,0.6,0.26666666666666666,0.2,0.2,0.13333333333333333,0.26666666666666666,0.2,0.26666666666666666,0.3333333333333333,0.5333333333333333 --color red
     # import plotly.graph_objects as go
     # print(f'Making a poster rank linearity plot...', file=sys.stderr)
-    # rank_legibilities = tuple(map(float, data.split(',')))
-    # for rank_linearity in rank_legibilities:
+    # rank_linearities = tuple(map(float, data.split(',')))
+    # for rank_linearity in rank_linearities:
         # assert 0 <= rank_linearity <= 1
-    # df = pd.DataFrame(rank_legibilities, columns=('rank_linearity',))
+    # df = pd.DataFrame(rank_linearities, columns=('rank_linearity',))
     # axis_template = {'title_font': {'size': 350,}, 'tickfont': {'size': 175,}}
     # figure = go.Figure(
         # data=go.Scatter(
@@ -142,7 +142,7 @@ def dh(context, *, output: bool) -> None:
                        # text='Social rank',
                        # standoff=150,
                    # ),
-                   # 'tickvals': tuple(range(len(rank_legibilities) + 1)),},
+                   # 'tickvals': tuple(range(len(rank_linearities) + 1)),},
             # yaxis={**axis_template,
                    # 'title': dict(
                        # text='Rank linearity',
