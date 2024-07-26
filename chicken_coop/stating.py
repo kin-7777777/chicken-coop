@@ -85,6 +85,10 @@ class State(county.BaseState):
     @property
     def i_agents(self) -> tuple[int, ...]:
         return self.coop_config.i_agents
+    
+    @property
+    def i_high_reward_agents(self) -> tuple[int, ...]:
+        return self.coop_config.i_high_reward_agents
 
 
     @functools.cached_property
@@ -217,18 +221,26 @@ class State(county.BaseState):
 
         joint_move = tuple(Move.from_neural(actions[agent]) for agent in self.agents)
         joint_reward = [None] * len(self.agents)
-
+        
         for i_left_agent, i_right_agent in self.i_agent_pairs:
             match (joint_move[i_left_agent], joint_move[i_right_agent]):
                 case (Move.HAWK, Move.HAWK):
                     joint_reward[i_left_agent] = self.coop_config.anguish_reward
                     joint_reward[i_right_agent] = self.coop_config.anguish_reward
                 case (Move.HAWK, Move.DOVE):
-                    joint_reward[i_left_agent] = self.coop_config.victory_reward
+                    if i_left_agent in self.i_high_reward_agents:
+                        joint_reward[i_left_agent] = self.coop_config.victory_reward_high
+                    else:
+                        joint_reward[i_left_agent] = self.coop_config.victory_reward_low
+                    # joint_reward[i_left_agent] = self.coop_config.victory_reward
                     joint_reward[i_right_agent] = self.coop_config.defeat_reward
                 case (Move.DOVE, Move.HAWK):
                     joint_reward[i_left_agent] = self.coop_config.defeat_reward
-                    joint_reward[i_right_agent] = self.coop_config.victory_reward
+                    if i_right_agent in self.i_high_reward_agents:
+                        joint_reward[i_right_agent] = self.coop_config.victory_reward_high
+                    else:
+                        joint_reward[i_right_agent] = self.coop_config.victory_reward_low
+                    # joint_reward[i_right_agent] = self.coop_config.victory_reward
                 case (Move.DOVE, Move.DOVE):
                     joint_reward[i_left_agent] = self.coop_config.boredom_reward
                     joint_reward[i_right_agent] = self.coop_config.boredom_reward

@@ -303,7 +303,7 @@ def run(*, moniker: Optional[str], use_tune: bool, n_tune_samples: int,
             df.to_csv(trek.folder / 'tune_analysis.csv')
 
         else:
-            rollout(coop_config=CoopConfig(**coop_config_kwargs),
+            rollout(coop_config=CoopConfig(i_high_reward_agents=[0, 1], **coop_config_kwargs),
                     raw_visitor_policies=raw_visitor_policies,
                     trial_folder=(trek.folder / 'rollout'))
 

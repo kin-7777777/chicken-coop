@@ -56,7 +56,9 @@ from .dominance_hierarching import DominanceHierarchy
 @dataclasses.dataclass(kw_only=True, repr=False)
 class CoopConfig:
 
-    victory_reward: RealNumber = defaults.DEFAULT_VICTORY_REWARD
+    # victory_reward: RealNumber = defaults.DEFAULT_VICTORY_REWARD
+    victory_reward_high: RealNumber = 2*defaults.DEFAULT_VICTORY_REWARD
+    victory_reward_low: RealNumber = 2*defaults.DEFAULT_VICTORY_REWARD
     boredom_reward: RealNumber = defaults.DEFAULT_BOREDOM_REWARD
     defeat_reward: RealNumber = defaults.DEFAULT_DEFEAT_REWARD
     anguish_reward: RealNumber = defaults.DEFAULT_ANGUISH_REWARD
@@ -76,6 +78,8 @@ class CoopConfig:
     i_visitor_agents: tuple[int, ...] = ()
     visitor_dominance_hierarchy: Optional[DominanceHierarchy] = None
     freeze_visitors: bool = defaults.DEFAULT_FREEZE_VISITORS
+    
+    i_high_reward_agents: tuple[int, ...]
 
 
     def __post_init__(self) -> None:
@@ -97,8 +101,8 @@ class CoopConfig:
 
         ### Validating: ############################################################################
         #                                                                                          #
-        assert len({self.victory_reward, self.boredom_reward, self.defeat_reward,
-                    self.anguish_reward}) == 4
+        assert len({self.victory_reward_high, self.victory_reward_low, self.boredom_reward, self.defeat_reward,
+                    self.anguish_reward}) == 5
         assert self.n_agents % 2 == 0
         assert set(self.i_visitor_agents) <= set(self.i_agents)
         assert more_itertools.is_sorted(self.i_visitor_agents)
